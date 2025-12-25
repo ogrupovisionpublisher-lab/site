@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Calendar, Percent, CreditCard, Receipt, Lightbulb } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Calendar, Percent, CreditCard, Receipt, Lightbulb, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface LoanTier {
   minValue: number;
@@ -37,10 +37,19 @@ function getLoanDetails(amount: number) {
 
 export default function LoanSimulator() {
   const [loanAmount, setLoanAmount] = useState(20000);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const details = getLoanDetails(loanAmount);
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoanAmount(Number(e.target.value));
+  };
+
+  const handleSolicitar = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      navigate('/solicitar');
+    }, 1000);
   };
 
   const formatCurrency = (value: number) => {
@@ -145,13 +154,23 @@ export default function LoanSimulator() {
             </div>
           </div>
 
-          <Link
-            to="/solicitar"
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg px-8 py-4 rounded-xl inline-flex items-center justify-center gap-2 transition-colors shadow-lg hover:shadow-xl"
+          <button
+            onClick={handleSolicitar}
+            disabled={isLoading}
+            className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-400 disabled:cursor-not-allowed text-white font-bold text-lg px-8 py-4 rounded-xl inline-flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl"
           >
-            Solicitar Este Valor
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+            {isLoading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Processando...
+              </>
+            ) : (
+              <>
+                Solicitar Este Valor
+                <ArrowRight className="w-5 h-5" />
+              </>
+            )}
+          </button>
 
           <p className="text-center text-gray-500 text-xs mt-6">
             Valores estimados. As condições finais são confirmadas após inscrição e análise dos dados.
